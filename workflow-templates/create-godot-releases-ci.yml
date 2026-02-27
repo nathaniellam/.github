@@ -1,0 +1,43 @@
+name: Create Godot Releases on Tag
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_call:
+    inputs:
+      godot-version:
+        required: true
+        type: string
+
+jobs:
+  export_game:
+    # Always use ubuntu-latest for this action
+    runs-on: ubuntu-latest
+    permissions: write-all
+    # Job name, can be anything
+    name: Create Github Release
+    steps:
+      # Always include the checkout step so that
+      # your project is available for Godot to export
+      - name: checkout
+        uses: actions/checkout@v4
+        filter: tree:0
+        fetch-depth: 0
+        with:
+          lfs: true
+
+      - name: export game
+        id: export
+        uses: firebelley/godot-export@v7
+        with:
+          godot_executable_download_url: "https://github.com/godotengine/godot/releases/download/${{ inputs.godot-version }}-stable/Godot_v${{ inputs.godot-version }}-stable_linux.x86_64.zip"
+          godot_export_templates_download_url: "https://github.com/godotengine/godot/releases/download/${{ inputs.godot-version }}-stable/Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz"
+          relative_project_path: ./
+          cache: true
+          archive_output: true
+
+      - name: create release
+        uses: ncipollo/release-action@v1.20.0
+        with:
+          artifacts: ${{ steps.export.outputs.archive_directory }}/*

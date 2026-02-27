@@ -1,0 +1,32 @@
+name: Publish Web Build to Itch
+
+on:
+  release:
+    types: [published]
+  workflow_call:
+    inputs:
+      itch-user:
+        required: true
+        type: string
+    secrets:
+      butler-credentials:
+        required: true
+
+jobs:
+  release_web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download web
+        id: download-web
+        uses: dsaltares/fetch-gh-release-asset@v1.1.2
+        with:
+          file: "${{ github.event.repository.name }}.web.zip"
+      - name: deploy to itch.io (Web)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.butler-credentials }}
+          CHANNEL: html5
+          ITCH_GAME: ${{ github.event.repository.name }}
+          ITCH_USER: ${{ inputs.itch-user }}
+          PACKAGE: "${{ github.event.repository.name }}.web.zip"
+          VERSION: ${{ steps.download-web.outputs.version }}
