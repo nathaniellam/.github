@@ -1,0 +1,11 @@
+{
+  "name": "Create Godot Releases on Tag",
+  "description": "Creates Godot release when a new tag is pushed.",
+  "categories": [
+    "GDScript"
+  ],
+  "filePatterns": [
+    "^project.godot$",
+    "*.gd$"
+  ]
+}

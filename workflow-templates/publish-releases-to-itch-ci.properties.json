@@ -1,0 +1,11 @@
+{
+  "name": "Publish Web build to Itch",
+  "description": "Pushes a new web build to Itch when available.",
+  "categories": [
+    "GDScript"
+  ],
+  "filePatterns": [
+    "^project.godot$",
+    "*.gd$"
+  ]
+}
